@@ -1,7 +1,5 @@
 const express = require('express');
 const cors = require('cors');  // Import the cors package
-
-const compraRoutes = require('./routes/compraRoutes');
 const livroRoutes = require('./routes/livroRoutes');
 
 const app = express();
@@ -9,7 +7,6 @@ const app = express();
 app.use(express.json());
 app.use(cors())
 
-app.use('/api', compraRoutes);
 app.use('/api', livroRoutes);
 
 const PORT = process.env.PORT || 3001;
