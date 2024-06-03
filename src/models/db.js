@@ -1,11 +1,12 @@
 const mysql = require('mysql2');
+require('dotenv').config();
 
 const pool = mysql.createPool({
-  host: 'mysql-1511e230-rafaelmarottag-f210.e.aivencloud.com',
-  user: 'avnadmin',
-  password: 'AVNS_bJK0fy-oJd2YwPIChED',
-  database: 'sebo_db',
-  port: 28795
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_DATABASE,
+  port: process.env.DB_PORT
 });
 
 module.exports = pool.promise();

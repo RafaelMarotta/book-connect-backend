@@ -40,3 +40,7 @@ coverage/
 *.bak
 *.tmp
 *.swp
+
+# Env scripts
+setup_envs.sh
+setup_envs.bat
