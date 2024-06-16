@@ -44,3 +44,4 @@ coverage/
 # Env scripts
 setup_envs.sh
 setup_envs.bat
+.vercel

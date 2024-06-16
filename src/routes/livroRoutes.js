@@ -4,8 +4,9 @@ const router = express.Router();
 
 router.get('/livros', livroController.getLivros);
 router.get('/livros/:id', livroController.getLivroById);
-router.post('/livros', livroController.createLivro);
-router.put('/livros/:id', livroController.updateLivro);
+router.get('/livros/image/:id', livroController.getLivroImage);
+router.post('/livros', livroController.upload.single('imagem'), livroController.createLivro);
+router.put('/livros/:id', livroController.upload.single('imagem'), livroController.updateLivro);
 router.delete('/livros/:id', livroController.deleteLivro);
 
 module.exports = router;
