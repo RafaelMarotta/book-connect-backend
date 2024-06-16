@@ -3,9 +3,18 @@ const db = require('../models/db');
 // Listar todos os livros
 exports.getLivros = async (req, res) => {
     try {
-        console.log("Getting livros")
+        console.log("Getting livros");
         const [rows] = await db.query('SELECT * FROM livro');
-        res.json(rows);
+        
+        // Convert each BLOB to base64
+        const livros = rows.map(livro => {
+            if (livro.imagem_base64) {
+                livro.imagem_base64 = Buffer.from(livro.imagem_base64).toString('base64');
+            }
+            return livro;
+        });
+
+        res.json(livros);
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
@@ -28,17 +37,26 @@ exports.getLivroById = async (req, res) => {
 
 // Criar um novo livro
 exports.createLivro = async (req, res) => {
-    console.log("Creating Livro")
+    console.log("Creating Livro");
     const { titulo, conservacao, autor, sinopse, data_cadastro, preco_estimado, preco_compra, nome_vendedor, data, imagem_base64 } = req.body;
     try {
+        // Decode the base64 string to binary data
+        const imagemBlob = Buffer.from(imagem_base64, 'base64');
+
+        // Insert into compra table
         const [compra] = await db.query('INSERT INTO compra (preco, nome_vendedor, data, vendedor_id) VALUES (?, ?, ?, ?)', [preco_compra, nome_vendedor, data, null]);
         const compra_id = compra.insertId;
-        const [livro] = await db.query('INSERT INTO livro (titulo, conservacao, autor, sinopse, data_cadastro, preco_estimado, compra_id, imagem_base64) VALUES (?, ?, ?, ?, ?, ?, ?, ?)', [titulo, conservacao, autor, sinopse, data_cadastro, preco_estimado, compra_id, imagem_base64]);
+
+        // Insert into livro table
+        const [livro] = await db.query('INSERT INTO livro (titulo, conservacao, autor, sinopse, data_cadastro, preco_estimado, compra_id, imagem_base64) VALUES (?, ?, ?, ?, ?, ?, ?, ?)', 
+        [titulo, conservacao, autor, sinopse, data_cadastro, preco_estimado, compra_id, imagemBlob]);
+        
         res.json({ id: livro.insertId, titulo, conservacao, autor, sinopse, data_cadastro, preco_estimado, compra_id });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
 };
+
 // Atualizar um livro existente
 exports.updateLivro = async (req, res) => {
     console.log("Updating Livro")
@@ -55,7 +73,6 @@ exports.updateLivro = async (req, res) => {
     }
 };
 
-// Deletar um livro
 // Deletar um livro
 exports.deleteLivro = async (req, res) => {
     console.log("Cheguei aqui")
