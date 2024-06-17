@@ -35,7 +35,7 @@ exports.getLivroById = async (req, res) => {
     console.log("Getting livro by id")
     const { id } = req.params;
     try {
-        const [rows] = await db.query('SELECT l.id, l.titulo, l.conservacao, l.autor, l.sinopse, l.data_cadastro, l.preco_estimado, l.compra_id, c.preco as preco_compra FROM livro JOIN compra c ON c.id = l.compra_id WHERE id = ?', [id]);
+        const [rows] = await db.query('SELECT l.id, l.titulo, l.conservacao, l.autor, l.sinopse, l.data_cadastro, l.preco_estimado, l.compra_id, c.preco as preco_compra FROM livro as l JOIN compra c ON c.id = l.compra_id WHERE id = ?', [id]);
         if (rows.length === 0) {
             return res.status(404).json({ error: 'Livro não encontrado' });
         }
