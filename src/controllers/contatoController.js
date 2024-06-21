@@ -1,9 +1,8 @@
 const express = require('express');
-const Contato = require('../models/contatoModel'); // Assuma que 'contatoModel' é o modelo do seu contato
+const Contato = require('../models/contatoModel');
 
 const router = express.Router();
 
-// Buscar todos os contatos
 router.get('/contatos', async (req, res) => {
   try {
     const contatos = await Contato.find();
@@ -14,7 +13,6 @@ router.get('/contatos', async (req, res) => {
   }
 });
 
-// Buscar contato por ID
 router.get('/contatos/:id', async (req, res) => {
   const id = req.params.id;
   try {
@@ -29,9 +27,8 @@ router.get('/contatos/:id', async (req, res) => {
   }
 });
 
-// Criar novo contato
 router.post('/contatos', async (req, res) => {
-  const { nome, email, telefone } = req.body; // Assuma que estes são os campos do seu contato
+  const { nome, email, telefone } = req.body;
 
   try {
     const novoContato = new Contato({ nome, email, telefone });
@@ -43,10 +40,9 @@ router.post('/contatos', async (req, res) => {
   }
 });
 
-// Atualizar contato
 router.put('/contatos/:id', async (req, res) => {
   const id = req.params.id;
-  const { nome, email, telefone } = req.body; // Assuma que estes são os campos do seu contato
+  const { nome, email, telefone } = req.body;
 
   try {
     const contato = await Contato.findByIdAndUpdate(id, { nome, email, telefone });
