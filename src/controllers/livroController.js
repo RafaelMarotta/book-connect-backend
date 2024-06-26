@@ -6,7 +6,18 @@ const upload = multer({ storage: multer.memoryStorage() });
 exports.getLivros = async (req, res) => {
     try {
         console.log("Getting livros");
-        const [rows] = await db.query('SELECT id, titulo, conservacao, autor, sinopse, data_cadastro, preco_estimado, compra_id FROM livro');
+        
+        const { text } = req.query;
+        const searchText = text ? `%${text}%` : '%';
+
+        const [rows] = await db.query(
+            `SELECT livro.id, livro.titulo, livro.conservacao, livro.autor, livro.sinopse, livro.data_cadastro, livro.preco_estimado, livro.compra_id 
+            FROM livro 
+            LEFT JOIN venda ON livro.id = venda.livro_id 
+            WHERE venda.id IS NULL AND livro.titulo LIKE ?`,
+            [searchText]
+        );
+        
         res.json(rows);
     } catch (error) {
         res.status(500).json({ error: error.message });
