@@ -1,13 +1,17 @@
 const express = require('express');
 const cors = require('cors');  // Import the cors package
 const livroRoutes = require('./routes/livroRoutes');
+const vendaRoutes = require('./routes/vendaRoutes');
+const trocaRoutes = require('./routes/trocaRoutes');
 
 const app = express();
 
 app.use(express.json());
-app.use(cors())
+app.use(cors());
 
 app.use('/api', livroRoutes);
+app.use('/api', vendaRoutes);
+app.use('/api', trocaRoutes);
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
