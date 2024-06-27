@@ -14,7 +14,7 @@ exports.getLivros = async (req, res) => {
             `SELECT livro.id, livro.titulo, livro.conservacao, livro.autor, livro.sinopse, livro.data_cadastro, livro.preco_estimado, livro.compra_id 
             FROM livro 
             LEFT JOIN venda ON livro.id = venda.livro_id 
-            LEFT JOIN troca ON livro.id = troca.livro_oferecido_id OR livro.id = troca.livro_doado_id
+            LEFT JOIN troca ON livro.id = troca.livro_oferecido_id 
             WHERE venda.id IS NULL AND troca.id IS NULL AND livro.titulo LIKE ?`,
             [searchText]
         );
