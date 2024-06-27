@@ -51,12 +51,12 @@ exports.createTroca = async (req, res) => {
         // Inserir a troca
         const [trocaResult] = await connection.query(
             'INSERT INTO troca (data, livro_oferecido_id, livro_doado_id, contato_id) VALUES (?, ?, ?, ?)', 
-            [data, livro_oferecido_id, livro_doado_id, contato_id || null]
+            [data, livro_oferecido_id, livro_doado_id, null]
         );
 
         await connection.commit();
 
-        res.json({ id: trocaResult.insertId, data, livro_oferecido_id, livro_doado_id, contato_id });
+        res.json({ id: trocaResult.insertId, data, livro_oferecido_id, livro_doado_id, contato_id: null });
     } catch (error) {
         await connection.rollback();
         res.status(500).json({ error: error.message });
@@ -70,7 +70,7 @@ exports.updateTroca = async (req, res) => {
     const { id } = req.params;
     const { data, livro_oferecido_id, livro_doado_id, contato_id } = req.body;
     try {
-        const [result] = await db.query('UPDATE troca SET data = ?, livro_oferecido_id = ?, livro_doado_id = ?, contato_id = ? WHERE id = ?', [data, livro_oferecido_id, livro_doado_id, contato_id || null, id]);
+        const [result] = await db.query('UPDATE troca SET data = ?, livro_oferecido_id = ?, livro_doado_id = ?, contato_id = ? WHERE id = ?', [data, livro_oferecido_id, livro_doado_id, contato_id, id]);
         if (result.affectedRows === 0) {
             return res.status(404).json({ error: 'Troca não encontrada' });
         }
