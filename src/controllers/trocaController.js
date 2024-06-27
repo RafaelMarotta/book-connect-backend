@@ -1,6 +1,5 @@
 const db = require('../models/db');
 
-// Listar todas as trocas
 exports.getTrocas = async (req, res) => {
     try {
         console.log("Getting trocas");
@@ -11,7 +10,6 @@ exports.getTrocas = async (req, res) => {
     }
 };
 
-// Obter uma troca por ID
 exports.getTrocaById = async (req, res) => {
     console.log("Getting troca by id");
     const { id } = req.params;
@@ -26,7 +24,6 @@ exports.getTrocaById = async (req, res) => {
     }
 };
 
-// Criar uma nova troca
 exports.createTroca = async (req, res) => {
     const connection = await db.getConnection();
     try {
@@ -34,12 +31,20 @@ exports.createTroca = async (req, res) => {
         
         console.log("Creating Troca");
         const { data, livro_oferecido_id, novo_livro, contato_id } = req.body;
-        const { titulo, conservacao, autor, sinopse, data_cadastro, preco_estimado, compra_id } = novo_livro;
+        const { titulo, conservacao, autor, sinopse, data_cadastro, preco_estimado, preco_compra, nome_vendedor, data: data_cadastro_novo_livro } = novo_livro;
+        const imagemBlob = req.file ? req.file.buffer : null;
+
+        // Inserir na tabela compra
+        const [compra] = await connection.query(
+            'INSERT INTO compra (preco, nome_vendedor, data, vendedor_id) VALUES (?, ?, ?, ?)', 
+            [preco_compra, nome_vendedor, data_cadastro_novo_livro, null]
+        );
+        const compra_id = compra.insertId;
 
         // Inserir o novo livro
         const [livroResult] = await connection.query(
-            'INSERT INTO livro (titulo, conservacao, autor, sinopse, data_cadastro, preco_estimado, compra_id) VALUES (?, ?, ?, ?, ?, ?, ?)', 
-            [titulo, conservacao, autor, sinopse, data_cadastro, preco_estimado, compra_id]
+            'INSERT INTO livro (titulo, conservacao, autor, sinopse, data_cadastro, preco_estimado, compra_id, imagem_blob) VALUES (?, ?, ?, ?, ?, ?, ?, ?)', 
+            [titulo, conservacao, autor, sinopse, data_cadastro, preco_estimado, compra_id, imagemBlob]
         );
         const livro_doado_id = livroResult.insertId;
 
@@ -60,7 +65,6 @@ exports.createTroca = async (req, res) => {
     }
 };
 
-// Atualizar uma troca existente
 exports.updateTroca = async (req, res) => {
     console.log("Updating Troca");
     const { id } = req.params;
@@ -76,7 +80,6 @@ exports.updateTroca = async (req, res) => {
     }
 };
 
-// Deletar uma troca
 exports.deleteTroca = async (req, res) => {
     const { id } = req.params;
     try {
