@@ -3,8 +3,7 @@ const db = require('../models/db');
 // Listar todas as vendas
 exports.getVendas = async (req, res) => {
     try {
-        console.log("Getting vendas")
-        const [rows] = await db.query('SELECT * FROM venda');
+        const [rows] = await db.query(`SELECT * FROM venda`);
         res.json(rows);
     } catch (error) {
         res.status(500).json({ error: error.message });
@@ -13,7 +12,6 @@ exports.getVendas = async (req, res) => {
 
 // Obter uma venda por ID
 exports.getVendaById = async (req, res) => {
-    console.log("Getting venda by id")
     const { id } = req.params;
     try {
         const [rows] = await db.query('SELECT * FROM venda WHERE id = ?', [id]);
@@ -28,11 +26,13 @@ exports.getVendaById = async (req, res) => {
 
 // Criar uma nova venda
 exports.createVenda = async (req, res) => {
-    console.log("Creating Venda")
-    const { valor, cliente_id, data_venda, delivery, valor_frete, endereco_id } = req.body;
+    const { valor, cliente_id, data_venda, delivery, valor_frete, endereco_id, livro_id } = req.body;
     try {
-        const [result] = await db.query('INSERT INTO venda (valor, cliente_id, data_venda, delivery, valor_frete, endereco_id) VALUES (?, ?, ?, ?, ?, ?)', [valor, cliente_id, data_venda, delivery, valor_frete, endereco_id]);
-        res.json({ id: result.insertId, valor, cliente_id, data_venda, delivery, valor_frete, endereco_id });
+        const [result] = await db.query(
+            'INSERT INTO venda (valor, cliente_id, data_venda, delivery, valor_frete, endereco_id, livro_id) VALUES (?, ?, ?, ?, ?, ?, ?)', 
+            [valor, cliente_id || null, data_venda, delivery, valor_frete, endereco_id || null, livro_id || null]
+        );
+        res.json({ id: result.insertId, valor, cliente_id, data_venda, delivery, valor_frete, endereco_id, livro_id });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
@@ -40,15 +40,17 @@ exports.createVenda = async (req, res) => {
 
 // Atualizar uma venda existente
 exports.updateVenda = async (req, res) => {
-    console.log("Updating Venda")
     const { id } = req.params;
-    const { valor, cliente_id, data_venda, delivery, valor_frete, endereco_id } = req.body;
+    const { valor, cliente_id, data_venda, delivery, valor_frete, endereco_id, livro_id } = req.body;
     try {
-        const [result] = await db.query('UPDATE venda SET valor = ?, cliente_id = ?, data_venda = ?, delivery = ?, valor_frete = ?, endereco_id = ? WHERE id = ?', [valor, cliente_id, data_venda, delivery, valor_frete, endereco_id, id]);
+        const [result] = await db.query(
+            'UPDATE venda SET valor = ?, cliente_id = ?, data_venda = ?, delivery = ?, valor_frete = ?, endereco_id = ?, livro_id = ? WHERE id = ?',
+            [valor, cliente_id || null, data_venda, delivery, valor_frete, endereco_id || null, livro_id || null, id]
+        );
         if (result.affectedRows === 0) {
             return res.status(404).json({ error: 'Venda não encontrada' });
         }
-        res.json({ id, valor, cliente_id, data_venda, delivery, valor_frete, endereco_id });
+        res.json({ id, valor, cliente_id, data_venda, delivery, valor_frete, endereco_id, livro_id });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
