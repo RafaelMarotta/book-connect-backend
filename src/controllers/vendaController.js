@@ -3,7 +3,7 @@ const db = require('../models/db');
 // Listar todas as vendas
 exports.getVendas = async (req, res) => {
     try {
-        const [rows] = await db.query(`SELECT * FROM venda`);
+        const [rows] = await db.query(`SELECT v.*, l.titulo FROM venda v JOIN livro l ON l.id = v.livro_id`);
         res.json(rows);
     } catch (error) {
         res.status(500).json({ error: error.message });
