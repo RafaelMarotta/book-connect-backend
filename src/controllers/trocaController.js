@@ -14,7 +14,7 @@ exports.getTrocaById = async (req, res) => {
     console.log("Getting troca by id");
     const { id } = req.params;
     try {
-        const [rows] = await db.query('SELECT * FROM troca WHERE id = ?', [id]);
+        const [rows] = await db.query('SELECT t.id, t.data, l1.titulo as livro_oferecido, l2.titulo as livro_doado FROM troca t JOIN livro l1 ON l1.id = t.livro_oferecido.id JOIN livro l2 ON l2.id = t.livro_doado.id WHERE t.id = ?', [id]);
         if (rows.length === 0) {
             return res.status(404).json({ error: 'Troca não encontrada' });
         }
