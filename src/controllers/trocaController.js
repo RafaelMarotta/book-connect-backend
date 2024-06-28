@@ -3,7 +3,7 @@ const db = require('../models/db');
 exports.getTrocas = async (req, res) => {
     try {
         console.log("Getting trocas");
-        const [rows] = await db.query('SELECT * FROM troca');
+        const [rows] = await db.query('SELECT t.id, t.data, l1.titulo as livro_oferecido, l2.titulo as livro_doado FROM troca t JOIN livro l1 ON l1.id = t.livro_oferecido_id JOIN livro l2 ON l2.id = t.livro_doado_id');
         res.json(rows);
     } catch (error) {
         res.status(500).json({ error: error.message });
