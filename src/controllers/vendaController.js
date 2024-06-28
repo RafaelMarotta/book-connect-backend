@@ -3,7 +3,7 @@ const db = require('../models/db');
 // Listar todas as vendas
 exports.getVendas = async (req, res) => {
     try {
-        const [rows] = await db.query(`SELECT v.*, l.titulo, e.cep, e.estado, e.numero, e.cidade FROM venda v JOIN livro l ON l.id = v.livro_id LEFT JOIN endereco e ON e.id = v.endereco_id`);
+        const [rows] = await db.query(`SELECT v.*, l.titulo, e.cep, e.estado, e.numero, e.cidade, e.bairro FROM venda v JOIN livro l ON l.id = v.livro_id LEFT JOIN endereco e ON e.id = v.endereco_id`);
         res.json(rows);
     } catch (error) {
         res.status(500).json({ error: error.message });
